@@ -26,6 +26,8 @@ def get_ascensions(download_directory):
 	# Read the ascensions from the text file
 	with open('SRR_Acc_List.txt', 'r') as f:
 		for line in f:
+			# strip the "\n from the end of each line"
+			line = line.rstrip('\n')
 			# Specify the output directory
 			output_path = os.path.join(download_directory, line)
 			# Check if the ascension was already downloaded
@@ -35,7 +37,7 @@ def get_ascensions(download_directory):
 				# Download and split the reads
 				os.mkdir(output_path)
 				print('Downloading & splitting: {}'.format(line))
-				subprocess.call('fastq-dump -I --split-files {0} --outdir {1}'.format(line, output_path))
+				subprocess.call('fastq-dump -I --split-files {0} --outdir {1}'.format(line, output_path), shell=True)
 				print('{} complete!'.format(line))
 		print('No more ascensions to download.')
 
@@ -56,8 +58,8 @@ def subset(download_directory):
 			print('Ascension {} has already been subsetted'.format(directory))
 		else: 
 			# Subset the read files
-			subprocess.call('seqtk sample -s100 {0} 250000 > 250k_{0}'.format(libraries[0]))
-			subprocess.call('seqtk sample -s100 {0} 250000 > 250k_{0}'.format(libraries[1]))
+			subprocess.call('seqtk sample -s100 {0} 250000 > 250k_{0}'.format(libraries[0]), shell=True)
+			subprocess.call('seqtk sample -s100 {0} 250000 > 250k_{0}'.format(libraries[1]), shell=True)
 			# Remove the old files, only the subsets are needed 
 			os.remove(libraries[0])
 			os.remove(libraries[1])
@@ -73,19 +75,15 @@ def assemble(download_directory):
 	paths, directories, files = next(os.walk(download_directory))
 	os.chdir(download_directory)
 	for directory in directories:
-		# Specify the path to each ascension directory 
-		ascension_directory = os.path.join(download_directory, directory)
-		# Check whether the ascension has already been assembled
-		if os.path.exists(os.path.join(ascension_directory, '{}-stats.csv'.format(directory) == True:
-			print('Ascension {} has already been assembled!'.format(directory))
-		else:
-			libraries = os.listdir(ascension_directory)
-			# Second check to see if assembly is necessary 
-			# and run, if so
-			if libraries == 2:
-				os.chdir(ascension_directory)
-				subprocess.call('abyss-pe k=64 name={0} in="{1} {2}"'.format(directory, libraries[0], libraries[1]))
-				print('Ascension {} has been assembled!'.format(directory))
+		# Specify the path to each ascension directory & index it
+		ascension_directory = os.path.join(download_directory, directory)			
+		libraries = os.listdir(ascension_directory)
+		# Check to see if the ascension is not yet assembled
+		# and run, if so
+		if len(libraries) == 2:
+			os.chdir(ascension_directory)
+			subprocess.call('abyss-pe k=64 name={0} in="{1} {2}"'.format(directory, libraries[0], libraries[1]), shell=True)
+			print('Ascension {} has been assembled!'.format(directory))
 	print('All ascensions have been assembled!')
 		
 	
