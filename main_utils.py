@@ -1,6 +1,9 @@
 import os
 import shutil
 import subprocess
+# BioPython imports 
+from Bio import SeqIO
+from Bio.Alphabet import generic_dna
 
 
 # (Optional) Function to run commands and pipe the output to the terminal 
@@ -46,7 +49,7 @@ def get_ascensions(download_directory):
 # Seqtk manual: https://github.com/lh3/seqtk
 
 def subset(download_directory):
-	# Index the contents of the working directory
+	# Index the contents of the download directory
 	paths, directories, files = next(os.walk(download_directory))
 	for directory in directories:
 		# Go to the sample directory and check its contents
@@ -71,20 +74,72 @@ def subset(download_directory):
 # Abyss manual: https://github.com/bcgsc/abyss
 
 def assemble(download_directory):
-	# Index the contents of the working directory
+	# Index the contents of the download directory
 	paths, directories, files = next(os.walk(download_directory))
 	os.chdir(download_directory)
 	for directory in directories:
 		# Specify the path to each ascension directory & index it
 		ascension_directory = os.path.join(download_directory, directory)			
 		libraries = os.listdir(ascension_directory)
-		# Check to see if the ascension is not yet assembled
-		# and run, if so
+		# Check to see if the ascension is not yet assembled by checking
+		# if only the paired-end read files are present
 		if len(libraries) == 2:
 			os.chdir(ascension_directory)
 			subprocess.call('abyss-pe k=64 name={0} in="{1} {2}"'.format(directory, libraries[0], libraries[1]), shell=True)
 			print('Ascension {} has been assembled!'.format(directory))
 	print('All ascensions have been assembled!')
 		
+
+# (Optional) Helper function to extract the path of the result file containing
+# the contigs from the performed assembly 	
+# Only to be used if the condition in "collect_assemblies" doesn't work	
+		
+def get_abyss_results(directory):
+	# Define a list with terms used to filter the files in the directory
+	filter_list = ['scaffolds', 'contigs', 'bubbles', 'unitigs', 'indel']
+	result_files = [os.path.splitext(file)[0].split('-') for file in os.listdir(directory) if file.endswith('.fa')]
+	result_files[:] = [result for result in result_files if not result[1] in filter_list]
+	result_files.sort()
+	result_file = '{0}-{1}.fa'.format(directory, result_files[-1][1])
+	return os.path.join(directory, result_file)
+		
+
+# Helper function to filter contigs in a file based on size (6000 bp < contig < 14000 bp)
+# This function sues BioPython's SeqIO module to parse the file
+
+def filter_contigs(path_to_results, filename, output_folder):
+	# Define the path to the output file 
+	output_file = os.path.join(output_folder, '{}.fa'.format(filename.split('-')[0]))
+	# Check if it already exists to prevent unnecessary code execution
+	if os.path.exists(output_file) == True:
+		print('File {} has already been filtered!'.format(filename))
+	else:
+		# Open the results_file and start filtering 
+		with open(path_to_results, "rU") as raw_contigs:
+			for contig in SeqIO.parse(raw_contigs, "fasta"):
+				if 6000 <= len(contig.seq) <= 14000:
+					# Write to the output file
+					with open(output_file, "a") as output:
+						SeqIO.write(contig, output, "fasta")					
+			print('Ascension {} has been filtered!'.format(filename.split('-')[0]))
+		
+# Collect & filter the assembly results in a single folder "filtered_contigs"
+				
+def collect_assemblies(working_directory, download_directory):
+	# Specify output folder and create it if necessary
+	output_folder = os.path.join(working_directory, 'filtered_contigs')
+	if os.path.exists(output_folder) == False:
+		os.mkdir(output_folder)
+	# Index the contents of the download directory
+	paths, directories, files = next(os.walk(download_directory))
+	for directory in directories:
+		print('Getting results for {}'.format(directory))
+		# Define the necessary variables and use the "filter_contigs"
+		# function to write filtered output files 
+		filename = '{}-8.fa'.format(directory)
+		path_to_results = os.path.join(download_directory, directory, filename)
+		filter_contigs(path_to_results, filename, output_folder)
+		
+	
 	
 
