@@ -49,14 +49,19 @@ def subset(download_directory):
 	for directory in directories:
 		# Go to the sample directory and check its contents
 		os.chdir(os.path.join(download_directory ,directory))
-		samples = os.listdir(os.path.join(download_directory, directory))
-		# Subset the read files
-		subprocess.call('seqtk sample -s100 {0} 250000 > 250k_{0}'.format(samples[0]))
-		subprocess.call('seqtk sample -s100 {0} 250000 > 250k_{0}'.format(samples[1]))
-		# Remove the old files, only the subsets are needed 
-		os.remove(samples[0])
-		os.remove(samples[1])
-		print('250k subsets of sample {0} generated'.format(directory))
+		libraries = os.listdir(os.path.join(download_directory, directory))
+		# Check whether the libraries have already been subsetted
+		# by checking whether the appended string "250k_" is in the filenames
+		if any('250k_' in l for l in libraries):
+			print('Ascension {} has already been subsetted'.format(directory))
+		else: 
+			# Subset the read files
+			subprocess.call('seqtk sample -s100 {0} 250000 > 250k_{0}'.format(libraries[0]))
+			subprocess.call('seqtk sample -s100 {0} 250000 > 250k_{0}'.format(libraries[1]))
+			# Remove the old files, only the subsets are needed 
+			os.remove(libraries[0])
+			os.remove(libraries[1])
+			print('250k subsets of sample {0} generated'.format(directory))
 	print('All subsets have been generated')
 
 	
@@ -64,6 +69,24 @@ def subset(download_directory):
 # Abyss manual: https://github.com/bcgsc/abyss
 
 def assemble(download_directory):
-	
+	# Index the contents of the working directory
+	paths, directories, files = next(os.walk(download_directory))
+	os.chdir(download_directory)
+	for directory in directories:
+		# Specify the path to each ascension directory 
+		ascension_directory = os.path.join(download_directory, directory)
+		# Check whether the ascension has already been assembled
+		if os.path.exists(os.path.join(ascension_directory, '{}-stats.csv'.format(directory) == True:
+			print('Ascension {} has already been assembled!'.format(directory))
+		else:
+			libraries = os.listdir(ascension_directory)
+			# Second check to see if assembly is necessary 
+			# and run, if so
+			if libraries == 2:
+				os.chdir(ascension_directory)
+				subprocess.call('abyss-pe k=64 name={0} in="{1} {2}"'.format(directory, libraries[0], libraries[1]))
+				print('Ascension {} has been assembled!'.format(directory))
+	print('All ascensions have been assembled!')
+		
 	
 
