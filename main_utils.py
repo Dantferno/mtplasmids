@@ -1,6 +1,7 @@
 import os
 import shutil
 import subprocess
+import re
 # BioPython imports 
 from Bio import SeqIO
 from Bio.Alphabet import generic_dna
@@ -44,7 +45,16 @@ def get_ascensions(download_directory):
 				print('{} complete!'.format(line))
 		print('No more ascensions to download.')
 
-			
+	
+# Helper function to rename sequence ID's if they're improperly named during subsetting
+# If the read ID's are incorrect, Abyss will throw an error and say
+# that all reads are mateless
+
+def correct_read_ids(directory, file):
+	subprocess.call('sed -i "/^@{0}/ s/.2 /.1 /g" {1}'.format(directory, file), shell=True)
+				
+	
+
 # Make subsets of each paired-end library of 250k reads each
 # Seqtk manual: https://github.com/lh3/seqtk
 
@@ -61,12 +71,19 @@ def subset(download_directory):
 			print('Ascension {} has already been subsetted'.format(directory))
 		else: 
 			# Subset the read files
+			print('Subsetting {}'.format(directory))
 			subprocess.call('seqtk sample -s100 {0} 250000 > 250k_{0}'.format(libraries[0]), shell=True)
 			subprocess.call('seqtk sample -s100 {0} 250000 > 250k_{0}'.format(libraries[1]), shell=True)
 			# Remove the old files, only the subsets are needed 
+			print('Removing original files')
 			os.remove(libraries[0])
 			os.remove(libraries[1])
-			print('250k subsets of sample {0} generated'.format(directory))
+			print('250k subsets of {0} generated'.format(directory))
+			libraries = os.listdir(os.path.join(download_directory, directory))
+			# Correct the read id's if improperly named by seqtk
+			print('Correcting read IDs')
+			correct_read_ids(directory, libraries[1])
+			print('Corrected reads of {}'.format(directory))
 	print('All subsets have been generated')
 
 	
@@ -122,7 +139,8 @@ def filter_contigs(path_to_results, filename, output_folder):
 					with open(output_file, "a") as output:
 						SeqIO.write(contig, output, "fasta")					
 			print('Ascension {} has been filtered!'.format(filename.split('-')[0]))
-		
+	print('All assembly results have been filtered!')
+	
 # Collect & filter the assembly results in a single folder "filtered_contigs"
 				
 def collect_assemblies(working_directory, download_directory):
