@@ -126,20 +126,19 @@ def get_abyss_results(directory):
 
 def filter_contigs(path_to_results, filename, output_folder):
 	# Define the path to the output file 
-	output_file = os.path.join(output_folder, '{}.fa'.format(filename.split('-')[0]))
+	path_output_file = os.path.join(output_folder, '{}.fa'.format(filename.split('-')[0]))
 	# Check if it already exists to prevent unnecessary code execution
-	if os.path.exists(output_file) == True:
+	if os.path.exists(path_output_file) == True:
 		print('File {} has already been filtered!'.format(filename))
 	else:
 		# Open the results_file and start filtering 
-		with open(path_to_results, "rU") as raw_contigs:
+		with open(path_to_results, "rU") as raw_contigs, open(path_output_file, "a") as output:
 			for contig in SeqIO.parse(raw_contigs, "fasta"):
+				# Write to output file if contig meets criteria
 				if 6000 <= len(contig.seq) <= 14000:
-					# Write to the output file
-					with open(output_file, "a") as output:
 						SeqIO.write(contig, output, "fasta")					
 			print('Ascension {} has been filtered!'.format(filename.split('-')[0]))
-	print('All assembly results have been filtered!')
+	
 	
 # Collect & filter the assembly results in a single folder "filtered_contigs"
 				
@@ -157,7 +156,8 @@ def collect_assemblies(working_directory, download_directory):
 		filename = '{}-8.fa'.format(directory)
 		path_to_results = os.path.join(download_directory, directory, filename)
 		filter_contigs(path_to_results, filename, output_folder)
-		
+	print('All assembly results have been filtered!')
+
 	
 	
 
