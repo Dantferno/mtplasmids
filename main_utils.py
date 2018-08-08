@@ -1,4 +1,5 @@
 import os 
+import subprocess
 
 
 # Function that handles all the paths to the necessary directories 
@@ -32,5 +33,34 @@ def create_dirs():
 		os.mkdir(trees_directory)
 	
 	return working_directory, download_directory, contigs_directory, annotations_directory, alignments_directory, trees_directory
-	
 
+	
+# This function checks whether necessary packages have been installed
+# and provides links if not 	
+	
+def check_dependencies():
+
+	dependencies = os.listdir(os.path.join('/usr/bin'))
+	tools = ['fastq-dump', 'seqtk', 'abyss-pe', 'muscle', 'iqtree']
+	
+	if not any(tool in tools for tool in dependencies):
+		print('You are missing the following depencies. Make sure these are installed before running the pipeline!\n')
+		# SRA Toolkit
+		if 'fastq-dump' not in dependencies:
+			subprocess.call("echo {0} '\e]8;;{1}\a{1}\e]8;;\a'".format('SRA Toolkit', 'http://ncbi.github.io/sra-tools/install_config.html'), shell=True)
+		# SeqTK
+		if 'seqtk' not in dependencies:
+			subprocess.call("echo {0} '\e]8;;{1}\a{1}\e]8;;\a'".format('SeqTK', 'https://github.com/lh3/seqtk'), shell=True)
+		# Abyss
+		if 'abyss-pe' not in dependencies:
+			subprocess.call("echo {0} '\e]8;;{1}\a{1}\e]8;;\a'".format('Abyss', 'https://github.com/bcgsc/abyss'), shell=True)
+		# MUSCLE
+		if 'muscle' not in dependencies:
+			subprocess.call("echo {0} '\e]8;;{1}\a{1}\e]8;;\a'".format('MUSCLE', 'https://www.drive5.com/muscle/downloads.htm'), shell=True)
+		# IQTree
+		if 'iqtree' not in dependencies:
+			subprocess.call("echo {0} '\e]8;;{1}\a{1}\e]8;;\a'".format('IQTree', 'http://www.iqtree.org/#download'), shell=True)
+
+	
+	
+	

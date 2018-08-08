@@ -24,8 +24,10 @@ def run_command(command):
 	
 # TO-DO	
 # Create a Helper function that the deletes the original SRA database file in
-# '~/ncbi/public/sra' after splitting to preserve drive space  
-
+# Home/ncbi/public/sra' after splitting to preserve drive space  
+def delete_ascension(ascension):
+	print(os.path.abspath('{}.sra'.format(ascension)))
+	
 
 
 # Download & split paired-end read libraries from the SRA database
@@ -60,7 +62,6 @@ def correct_read_ids(directory, file):
 	subprocess.call('sed -i "/^@{0}/ s/.2 /.1 /g" {1}'.format(directory, file), shell=True)
 				
 	
-
 # Make subsets of each paired-end library of 250k reads each
 # Seqtk manual: https://github.com/lh3/seqtk
 

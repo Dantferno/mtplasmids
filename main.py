@@ -1,5 +1,6 @@
 import os
-from main_utils import create_dirs
+import sys
+from main_utils import create_dirs, check_dependencies
 from assembly import get_ascensions, subset, assemble, collect_assemblies
 from phylo import align, make_trees, move_trees 
 
@@ -10,6 +11,9 @@ mtplasmids pipeline. More info will be added
 """
 print(message)
 
+# Function that displays missing dependencies on screen 
+# with links to their webpages 
+check_dependencies()
 
 # Make working directories if they do not yet exist
 # or just return them if they do
@@ -20,6 +24,9 @@ working_directory, download_directory, contigs_directory, annotations_directory,
 
 # Get SRA data
 #get_ascensions(download_directory)
+
+
+
 
 # Subset downloaded read files
 #subset(download_directory)

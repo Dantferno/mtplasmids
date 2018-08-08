@@ -19,8 +19,6 @@ def align(annotations_directory, alignments_directory):
 	
 # TO-DO
 # Function to concatenate alignments 	
-# using https://github.com/nylander/catfasta2phyml
-	
 	
 	
 	
@@ -64,3 +62,4 @@ def move_trees(alignments_directory, trees_directory):
 		else:
 			print('No treefiles found for {}'.format(alignment.split('.')[0]))
 	print('All treefiles have been moved')
+	
