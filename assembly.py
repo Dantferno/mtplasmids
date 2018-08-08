@@ -21,14 +21,15 @@ def run_command(command):
 	# that still needs to be processed.
 	print(p.stdout.read())
 
-	
-# TO-DO	
-# Create a Helper function that the deletes the original SRA database file in
-# Home/ncbi/public/sra' after splitting to preserve drive space  
-def delete_ascension(ascension):
-	print(os.path.abspath('{}.sra'.format(ascension)))
-	
 
+# Helper function that the deletes the original SRA database file in
+# /home/user/ncbi/public/sra' after splitting to preserve drive space
+  
+def delete_ascension(ascension):
+	ascension_folder = os.path.join('/home/{}/ncbi/public/sra'.format(getpass.getuser()))
+	os.remove(os.path.join(ascension_folder,'{}.sra'.format(ascension)))
+	print('.sra file of {} has been deleted!'.format(ascension))
+	
 
 # Download & split paired-end read libraries from the SRA database
 # SRA Toolkit manual: https://www.ncbi.nlm.nih.gov/books/NBK242621/
@@ -51,6 +52,8 @@ def get_ascensions(download_directory):
 				print('Downloading & splitting: {}'.format(line))
 				subprocess.call('fastq-dump -I --split-files {0} --outdir {1}'.format(line, output_path), shell=True)
 				print('{} complete!'.format(line))
+				# Delete the .sra file to save disk space 
+				delete_ascension(line)
 		print('No more ascensions to download.')
 
 	
@@ -75,7 +78,7 @@ def subset(download_directory):
 		# Check whether the libraries have already been subsetted
 		# by checking whether the appended string "250k_" is in the filenames
 		if any('250k_' in l for l in libraries):
-			print('Ascension {} has already been subsetted'.format(directory))
+			pass
 		else: 
 			# Subset the read files
 			print('Subsetting {}'.format(directory))
@@ -136,9 +139,10 @@ def filter_contigs(path_to_results, filename, contigs_directory):
 	path_output_file = os.path.join(contigs_directory, '{}.fa'.format(filename.split('-')[0]))
 	# Check if it already exists to prevent unnecessary code execution
 	if os.path.exists(path_output_file) == True:
-		print('File {} has already been filtered!'.format(filename))
+		pass
 	else:
-		# Open the necessary files and start filtering 
+		print('Getting results for {}'.format(filename.split('-'[0])))
+		# Open the necessary files and start filtering
 		with open(path_to_results, "rU") as raw_contigs, open(path_output_file, "a") as output:
 			filtered_contigs = [contig for contig in raw_contigs if 6000 <= len(contig.seq) <= 14000]
 			# Write to output file if contig meets criteria
@@ -152,7 +156,6 @@ def collect_assemblies(download_directory, contigs_directory):
 	# Index the contents of the download directory
 	paths, directories, files = next(os.walk(download_directory))
 	for directory in directories:
-		print('Getting results for {}'.format(directory))
 		# Define the necessary variables and use the "filter_contigs"
 		# function to write filtered output files 
 		filename = '{}-8.fa'.format(directory)
