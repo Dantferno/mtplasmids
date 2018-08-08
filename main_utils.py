@@ -10,7 +10,12 @@ def create_dirs():
 	download_directory = os.path.join(working_directory, 'sra_libraries')
 	if os.path.exists(download_directory) == False:
 		os.mkdir(download_directory)
-		
+	
+	# Specify the directory that stores the filtered contigs obtained from the assembly 
+	contigs_directory = os.path.join(working_directory, 'filtered_contigs')
+	if os.path.exists(contigs_directory) == False:
+		os.mkdir(contigs_directory)
+	
 	# Specify the directory that stores annotations of contigs 
 	annotations_directory = os.path.join(working_directory, 'annotations')
 	if os.path.exists(annotations_directory) == False:
@@ -26,6 +31,6 @@ def create_dirs():
 	if os.path.exists(trees_directory) == False:
 		os.mkdir(trees_directory)
 	
-	return working_directory, download_directory, annotations_directory, alignments_directory, trees_directory
+	return working_directory, download_directory, contigs_directory, annotations_directory, alignments_directory, trees_directory
 	
 

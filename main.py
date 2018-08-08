@@ -13,7 +13,7 @@ print(message)
 
 # Make working directories if they do not yet exist
 # or just return them if they do
-working_directory, download_directory, annotations_directory, alignments_directory, trees_directory = create_dirs()
+working_directory, download_directory, contigs_directory, annotations_directory, alignments_directory, trees_directory = create_dirs()
 
 
 ### 1  Downloading & de novo assembly of data ###
@@ -28,7 +28,7 @@ working_directory, download_directory, annotations_directory, alignments_directo
 #assemble(download_directory)
 
 # Collect & filter the assembly results into a single folder 
-#collect_assemblies(working_directory, download_directory)
+#collect_assemblies(download_directory, contigs_directory)
 
 
 ### 2  Annotating and finding mtplasmids ###

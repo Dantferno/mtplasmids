@@ -128,11 +128,11 @@ def get_abyss_results(directory):
 		
 
 # Helper function to filter contigs in a file based on size (6000 bp < contig < 14000 bp)
-# This function sues BioPython's SeqIO module to parse the file
+# This function uses BioPython's SeqIO module to parse the file
 
-def filter_contigs(path_to_results, filename, output_folder):
+def filter_contigs(path_to_results, filename, contigs_directory):
 	# Define the path to the output file 
-	path_output_file = os.path.join(output_folder, '{}.fa'.format(filename.split('-')[0]))
+	path_output_file = os.path.join(contigs_directory, '{}.fa'.format(filename.split('-')[0]))
 	# Check if it already exists to prevent unnecessary code execution
 	if os.path.exists(path_output_file) == True:
 		print('File {} has already been filtered!'.format(filename))
@@ -147,11 +147,7 @@ def filter_contigs(path_to_results, filename, output_folder):
 	
 # Collect & filter the assembly results in a single folder "filtered_contigs"
 				
-def collect_assemblies(working_directory, download_directory):
-	# Specify output folder and create it if necessary
-	output_folder = os.path.join(working_directory, 'filtered_contigs')
-	if os.path.exists(output_folder) == False:
-		os.mkdir(output_folder)
+def collect_assemblies(download_directory, contigs_directory):
 	# Index the contents of the download directory
 	paths, directories, files = next(os.walk(download_directory))
 	for directory in directories:
@@ -160,7 +156,7 @@ def collect_assemblies(working_directory, download_directory):
 		# function to write filtered output files 
 		filename = '{}-8.fa'.format(directory)
 		path_to_results = os.path.join(download_directory, directory, filename)
-		filter_contigs(path_to_results, filename, output_folder)
+		filter_contigs(path_to_results, filename, contigs_directory)
 	print('All assembly results have been filtered!')
 
 	
