@@ -17,6 +17,13 @@ def align(annotations_directory, alignments_directory):
 	print('All {} files have been aligned!'.format(len(files)))
 		
 	
+# TO-DO
+# Function to concatenate alignments 	
+# using https://github.com/nylander/catfasta2phyml
+	
+	
+	
+	
 # Function to generate maximum-likelihood trees for 
 # the previously made alignments
 
