@@ -3,10 +3,12 @@ import sys
 # relative imports
 from main_utils import create_dirs, check_dependencies
 from assembly import get_ascensions, subset, assemble, collect_assemblies
+from annotation import makeBLASTdatabase
 from phylo import align, make_trees, move_trees 
 
 
 # Display welcome message
+
 message = """
 mtplasmids pipeline. More info will be added 
 """
@@ -20,7 +22,7 @@ check_dependencies()
 
 # Make working directories if they do not yet exist
 # or just return them if they do
-working_directory, download_directory, contigs_directory, annotations_directory, alignments_directory, trees_directory = create_dirs()
+working_directory, download_directory, contigs_directory, blast_directory, annotations_directory, alignments_directory, trees_directory = create_dirs()
 
 
 ### 1  Downloading & de novo assembly of data ###
@@ -39,6 +41,13 @@ collect_assemblies(download_directory, contigs_directory)
 
 
 ### 2  Annotating and finding mtplasmids ###
+
+# Make database to BLAST ORF's to
+#makeBLASTdatabase(blast_directory)
+
+
+
+
 
 
 ### 3  Aligning & Generating trees ###

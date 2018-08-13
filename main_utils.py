@@ -16,6 +16,11 @@ def create_dirs():
 	contigs_directory = os.path.join(working_directory, 'filtered_contigs')
 	if os.path.exists(contigs_directory) == False:
 		os.mkdir(contigs_directory)
+		
+	# Specify the directory that stores blast files and databases
+	blast_directory = os.path.join(working_directory, 'blast')
+	if os.path.exists(blast_directory) == False:
+		os.mkdir(blast_directory)
 	
 	# Specify the directory that stores annotations of contigs 
 	annotations_directory = os.path.join(working_directory, 'annotations')
@@ -32,7 +37,7 @@ def create_dirs():
 	if os.path.exists(trees_directory) == False:
 		os.mkdir(trees_directory)
 	
-	return working_directory, download_directory, contigs_directory, annotations_directory, alignments_directory, trees_directory
+	return working_directory, download_directory, contigs_directory, blast_directory, annotations_directory, alignments_directory, trees_directory
 
 	
 # This function checks whether necessary packages have been installed
@@ -60,7 +65,7 @@ def check_dependencies():
 		# IQTree
 		if 'iqtree' not in dependencies:
 			subprocess.call("echo {0} '\e]8;;{1}\a{1}\e]8;;\a'".format('IQTree', 'http://www.iqtree.org/#download'), shell=True)
-
+		quit()
 	
 	
 	
