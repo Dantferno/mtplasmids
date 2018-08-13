@@ -46,7 +46,7 @@ def create_dirs():
 def check_dependencies():
 
 	dependencies = os.listdir(os.path.join('/usr/bin'))
-	tools = ['fastq-dump', 'seqtk', 'abyss-pe', 'muscle', 'iqtree']
+	tools = ['fastq-dump', 'seqtk', 'abyss-pe', 'muscle', 'iqtree', 'getorf']
 	
 	if not any(tool in tools for tool in dependencies):
 		print('You are missing the following depencies. Make sure these are installed before running the pipeline!\n')
@@ -65,6 +65,8 @@ def check_dependencies():
 		# IQTree
 		if 'iqtree' not in dependencies:
 			subprocess.call("echo {0} '\e]8;;{1}\a{1}\e]8;;\a'".format('IQTree', 'http://www.iqtree.org/#download'), shell=True)
+		if 'getorf' not in dependencies:
+			subprocess.call("echo {0} '\e]8;;{1}\a{1}\e]8;;\a'".format('EMBOSS', 'http://emboss.sourceforge.net/'), shell=True)
 		quit()
 	
 	

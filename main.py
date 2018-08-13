@@ -10,7 +10,7 @@ from phylo import align, make_trees, move_trees
 # Display welcome message
 
 message = """
-mtplasmids pipeline. More info will be added 
+Please check the manual (LINK TO MANUAL) to ensure you have all the necessary dependencies installed! 
 """
 print(message)
 
