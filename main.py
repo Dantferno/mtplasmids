@@ -3,7 +3,7 @@ import sys
 # relative imports
 from main_utils import create_dirs, check_dependencies
 from assembly import get_ascensions, subset, assemble, collect_assemblies
-from annotation import makeBLASTdatabase
+from annotation import makeBLASTdatabase, blast_orfs
 from phylo import align, make_trees, move_trees 
 
 
@@ -43,11 +43,10 @@ collect_assemblies(download_directory, contigs_directory)
 ### 2  Annotating and finding mtplasmids ###
 
 # Make database to BLAST ORF's to
-#makeBLASTdatabase(blast_directory)
+makeBLASTdatabase(annotations_directory, blast_directory)
 
-
-
-
+# BLAST found contigs to find mtplasmids
+blast_orfs(blast_directory, contigs_directory)
 
 
 ### 3  Aligning & Generating trees ###

@@ -65,6 +65,7 @@ def check_dependencies():
 		# IQTree
 		if 'iqtree' not in dependencies:
 			subprocess.call("echo {0} '\e]8;;{1}\a{1}\e]8;;\a'".format('IQTree', 'http://www.iqtree.org/#download'), shell=True)
+		# EMBOSS
 		if 'getorf' not in dependencies:
 			subprocess.call("echo {0} '\e]8;;{1}\a{1}\e]8;;\a'".format('EMBOSS', 'http://emboss.sourceforge.net/'), shell=True)
 		quit()
